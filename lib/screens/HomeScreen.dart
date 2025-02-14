@@ -131,41 +131,57 @@ class _HomescreenState extends State<Homescreen> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return const Center(child: Text('Failed to load data'));
-                  } else if (!snapshot.hasData) {
-                    return const Center(child: Text('No data found'));
-                  } else {
-                    final data = snapshot.data!.docs;
-
-                    return GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: List.generate(data.length, (index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, "/details",
-                                  arguments: {
-                                    "id": data[index].id,
-                                    "name": data[index]['name'],
-                                    "price": data[index]['price'],
-                                    "description": data[index]['description'],
-                                    "category": data[index]['category'],
-                                    "images": data[index]['images'],
-                                    "userId": data[index]['userId'],
-                                    "favouriteBy": data[index]['favouriteBy']
-                                  });
-                            },
-                            child: Productcard(
-                              name: data[index]['name'],
-                              price: data[index]['price'],
-                              description: data[index]['description'],
-                              category: data[index]['category'],
-                              image: data[index]['images'][0],
-                            ),
-                          );
-                        }));
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: Text('No products found for this category'),
+                      ),
+                    );
                   }
+
+                  final data = snapshot.data!.docs;
+
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisSpacing:
+                          10, // Add horizontal spacing between items
+                      mainAxisSpacing: 10, // Add vertical spacing between items
+                      children: data.map((doc) {
+                        final product = doc.data() as Map<String, dynamic>;
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, "/details",
+                                arguments: {
+                                  "id": doc.id,
+                                  "name": product['name'],
+                                  "price": product['price'],
+                                  "description": product['description'],
+                                  "category": product['category'],
+                                  "images": product['images'],
+                                  "userId": product['userId'],
+                                  "favouriteBy": product['favouriteBy']
+                                });
+                          },
+                          child: Productcard(
+                            name: product['name'],
+                            price: product['price'],
+                            description: product['description'],
+                            category: product['category'],
+                            image: (product['images'] != null &&
+                                    product['images'].isNotEmpty)
+                                ? product['images'][0]
+                                : 'https://via.placeholder.com/150',
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
                 })
           ],
         ),

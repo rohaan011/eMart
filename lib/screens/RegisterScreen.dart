@@ -22,17 +22,21 @@ class _RegisterscreenState extends State<Registerscreen> {
   void _register() {
     Auth()
         .register(
-          _firstnameController.text,
-          _lastnameController.text,
-          _usernameController.text,
-          _emailController.text,
-          _passwordController.text,
-        )
-        .then((value) => {
-              if (value == true)
-                {Esnackbar.show(context, "Register successfull")}
-            })
-        .catchError((error) => Esnackbar.show(context, "Register Failed!"));
+      _firstnameController.text,
+      _lastnameController.text,
+      _usernameController.text,
+      _emailController.text,
+      _passwordController.text,
+    )
+        .then((value) {
+      if (value == true) {
+        Esnackbar.show(context, "Register successful");
+      } else {
+        Esnackbar.show(context, "Registration failed - please try again");
+      }
+    }).catchError((error) {
+      Esnackbar.show(context, "Registration failed: ${error.toString()}");
+    });
   }
 
   @override
@@ -52,6 +56,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter firstname';
                     }
+                    return null;
                   },
                   decoration: InputDecoration(
                     labelText: 'Enter your firstname',
@@ -66,6 +71,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter lastname';
                     }
+                    return null;
                   },
                   decoration: InputDecoration(
                     labelText: 'Enter your lastname',
@@ -80,6 +86,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter username';
                     }
+                    return null;
                   },
                   decoration: InputDecoration(
                     labelText: 'Enter your username',
@@ -94,6 +101,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter email';
                     }
+                    return null;
                   },
                   decoration: InputDecoration(
                     labelText: 'Enter your email',
@@ -108,6 +116,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter password';
                     }
+                    return null;
                   },
                   decoration: InputDecoration(
                     labelText: 'Enter your password',

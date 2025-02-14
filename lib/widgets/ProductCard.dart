@@ -29,10 +29,20 @@ class _ProductcardState extends State<Productcard> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              widget.image,
+              widget.image.isNotEmpty
+                  ? widget.image
+                  : 'https://via.placeholder.com/150', // Default placeholder image
               fit: BoxFit.cover,
               width: 1000,
               height: 120,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  'assets/images/default_product.png', // Local fallback image
+                  fit: BoxFit.cover,
+                  width: 1000,
+                  height: 120,
+                );
+              },
             ),
           ),
           Text(
@@ -40,9 +50,14 @@ class _ProductcardState extends State<Productcard> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           Text(widget.category),
-          Text('NPR.${widget.price}',
-              style: TextStyle(
-                  color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold))
+          Text(
+            'NPR. ${widget.price.isNotEmpty ? widget.price : '0.00'}',
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
